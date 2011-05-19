@@ -439,6 +439,8 @@ class JabberBot(object):
         if self.custom_message_handler is not None:
             # Try the custom handler first. It can return None
             # if you want JabberBot to fall back to the default.
+            # You can return False, if you don't want for a command
+            # to be executed, but still get the unknown_command reply.
             reply = self.custom_message_handler(mess, text)
         else:
             reply = None
@@ -449,7 +451,7 @@ class JabberBot(object):
             except Exception, e:
                 reply = traceback.format_exc(e)
                 self.log.exception('An error happened while processing a message ("%s") from %s: %s"' % (text, jid, reply))
-        else:
+        elif not reply: # None or False
             # In private chat, it's okay for the bot to always respond.
             # In group chat, the bot should silently ignore commands it
             # doesn't understand or aren't handled by unknown_command().
